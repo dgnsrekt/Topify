@@ -1,0 +1,70 @@
+User
+----
+id PK int
+# username will be spotify_user_id spotify:type:id
+username string UNIQUE
+# If email is found store it.
+email string UNIQUE
+
+RefreshToken
+----
+id PK int
+# Each user has one token.
+user_id int FK - User.id
+token string UNIQUE 
+
+SpotifyAssets
+----
+id PK int
+spotify_uri string UNIQUE
+# use the textchoices album, artist, track, show, episode,
+type textchoice INDEX
+# Many Related Users to Many Assests
+user_id int INDEX FK >-< User.id
+has_image bool
+has_preview bool
+# maybe name
+
+Games
+----
+game_id PK int
+game_hash string UNIQUE
+# created with the stage data + owner_id + created_date
+owner_id int INDEX FK - User.id
+# one owner user_id to one game
+stages int INDEX FK -< Stages.stage_id
+# one game has many stages
+scoreboard_id int INDEX FK - ScoreBoard.score_board_id
+# one game has one scoreboard 
+
+Stages
+----
+stage_id PK int
+# puzzle_type maybe choice
+puzzle_type int
+# maybe nullible?
+puzzle_question str
+choice_id int FK -< Choices.choice_id
+# one stage has many choices
+
+
+Choices
+----
+choice_id PK int
+# spotify:album:11dFghVXANMlKmJXsNCbNl
+spotify_asset_id str
+# https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228\n" 
+image_url str
+preview_url str
+# correct or incorrect Binary Bit
+correct bool
+
+
+ScoreBoard
+----
+# unique constraint between the player_id + game_id
+# COMPOSITE KEY
+score_board_id PK int
+game_id PK int FK - Games.game_id
+player_id PK int FK - User.id
+score int
